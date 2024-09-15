@@ -6,27 +6,28 @@
 			"include": "#comment"
 		},
 		{
-			"include": "#import"
+			"include": "#definition"
 		},
 		{
-			"include": "#typedef"
+			"include": "#keyword"
 		},
 		{
-			"include": "#strings"
+			"include": "#separator"
+		},
+		{
+			"include": "#literal"
 		},
 		{
 			"include": "#id"
+		},
+		{
+			"include": "#operator"
+		},
+		{
+			"include": "#typeref"
 		}
 	],
 	"repository": {
-		"comment": {
-			"patterns": [
-				{
-					"name": "comment.line.capnp",
-					"match": "#.+"
-				}
-			]
-		},
 		"id": {
 			"patterns": [
 				{
@@ -38,6 +39,49 @@
 					"match": "@\\d+"
 				}
 			]
+		},
+		"comment": {
+			"patterns": [
+				{
+					"name": "comment.line.capnp",
+					"match": "#.+"
+				}
+			]
+		},
+		"name": {
+			"patterns": [{
+				"name": "entity.name.capnp",
+				"match": "[A-Za-z]\\w*"
+			},{
+				"name": "entity.name.capnp",
+				"begin": "[A-Za-z]\\w*\\(",
+				"end": "\\)",
+				"match": "#name"
+			}]
+		},
+		"keyword": {
+			"patterns": [{
+				"name": "storage.type.capnp",
+				"match": "const"
+			},{
+				"name": "storage.type.interface.capnp",
+				"match": "interface"
+			}, {
+				"name": "storage.type.enum.capnp",
+				"match": "enum"
+			}, {
+				"name": "storage.type.type.capnp",
+				"match": "using"
+			}, {
+				"name": "storage.type.class.capnp",
+				"match": "struct"
+			}, {
+				"name": "keyword.other.annotation.capnp",
+				"match": "annotation"
+			}, {
+				"name": "keyword.other.file.capnp",
+				"match": "file"
+			}]
 		},
 		"import": {
 			"patterns": [
@@ -58,6 +102,98 @@
 				}
 			]
 		},
+		"typeref": {
+			"patterns": [
+				{
+					"name": "meta.typeref.capnp",
+					"match": "(:)([\\w\\(\\), ]*)",
+					"captures": { 
+						"1": {
+							"name": "keyword.operator.type.capnp"
+						},
+						"2": {
+							"name": "entity.name.class.capnp",
+							"patterns":[
+								{ "include": "#name"}
+							]
+						} 
+					}
+				}
+			]
+		},
+		"assignment": {
+			"patterns": [
+				{
+					"name": "keyword.operator.assignment.capnp",
+					"match": "="
+				}
+			]
+		},
+		"operator": {
+			"patterns": [
+				{"include": "#assignment"}
+			]
+		},
+		"separator": {
+			"patterns": [{
+				"name": "punctuation.separator.comma.capnp",
+				"match": ","
+			}, {
+				"name": "punctuation.terminator.statement.capnp",
+				"match": ";"
+			}]
+		},
+		"definition": {
+			"patterns": [
+				{"include": "#import"},
+				{"include": "#struct"},
+				{"include": "#enum"},
+				{"include": "#constant"},
+				{"include": "#annotation"},
+				{"include": "#interface"}
+			]
+		},
+		"constant": {
+			"patterns": [{
+				"name": "meta.var.expr.capnp",
+				"begin": "(const)\\s+(\\w+)\\s*(:\\w+)\\s*=\\s*",
+				"end": "(;)",
+				"patterns": [
+					{
+						"include": "#literal"
+					},
+					{
+						"begin": "\\(",
+						"end": "\\)",
+						"patterns": [
+							{"include": "#separator"},
+							{"include": "#assignment"},
+							{"include": "#valueRef"},
+							{
+								"name": "variable.object.property.capnp",
+								"match": "[A-Za-z]\\w*"
+							}
+						]
+					}
+				],
+				"beginCaptures": {
+					"1": {
+						"patterns": [{"include": "#keyword"}]
+					},
+					"2": {
+						"name": "variable.other.constant.capnp"
+					},
+					"3": {
+						"patterns": [{"include": "#typeref"}]
+					}
+				},
+				"endCaptures": {
+					"1": {
+						"patterns": [{"include": "#separator"}]
+					}
+				}
+		}]
+		},
 		"typedef": {
 			"patterns": [
 				{
@@ -71,6 +207,29 @@
 				}
 			]
 		},
+		"annotation": {
+			"name": "meta.annotation.capnp",
+			"begin": "(annotation)\\s+(\\w+)\\(",
+			"patterns": [
+				{"include": "#separator"},
+				{"include": "#keyword"},
+				{
+					"name": "keyword.other.wildcard.capnp",
+					"match": "\\*"
+				}
+			],
+			"end": "\\)\\s*(:\\w+)(;)",
+			"beginCaptures": {
+				"1": {"patterns": [{"include": "#keyword"}]},
+				"2": {
+					"name": "storage.type.capnp",
+					"patterns": [{"include": "#name"}]
+				}
+			},
+			"endCaptures": {
+				"1": {"patterns": [{"include": "#typeref"}]}
+			}
+		},
 		"enum": {
 			"patterns": [
 				{
@@ -78,6 +237,9 @@
 					"begin": "(enum)(?:\\s+(\\w+))?(?:\\s+(@\\w+))?(\\s*{)?",
 					"end": "}",
 					"patterns": [
+						{
+							"include": "#comment"
+						},
 						{
 							"include": "#union"
 						},
@@ -111,7 +273,10 @@
 					"end": "}",
 					"patterns": [
 						{
-							"include": "#typedef"
+							"include": "#comment"
+						},
+						{
+							"include": "#definition"
 						},
 						{
 							"include": "#union"
@@ -165,7 +330,13 @@
 					"end": "}",
 					"patterns": [
 						{
+							"include": "#comment"
+						},
+						{
 							"include": "#method"
+						},
+						{
+							"include": "#definition"
 						}
 					],
 					"captures": {
@@ -193,7 +364,7 @@
 					"match": "(\\w+)(?:\\s*(@\\w+))?(?:\\s*(:[\\w(),\\s]*))?",
 					"captures": {
 						"1": {
-							"name": "variable.struct.field.capnp"
+							"name": "variable.object.property.capnp"
 						},
 						"2": {
 							"patterns": [
@@ -213,28 +384,11 @@
 				}
 			]
 		},
-		"typeref": {
-			"patterns": [
-				{
-					"name": "entity.name.type.class",
-					"match": ":?([\\w]*)(?:\\((([^,\\s]*)\\s*,?)*\\))?",
-					"captures": {
-						"3": {
-							"patterns": [
-								{
-									"include": "#typeref"
-								}
-							]
-						}
-					}
-				}
-			]
-		},
 		"method": {
 			"patterns": [
 				{
 					"name": "meta.method.capnp",
-					"match": "(\\w+)(?:\\s*(@\\w*))(?:\\s*(\\([^)]*\\)))?(?:\\s*->)?(?:\\s*(\\([^)]*\\)))",
+					"match": "(\\w+)(?:\\s*(@\\w*))(?:\\s*(?:(\\([^)]*\\))|(\\w+)))?(?:\\s*->)?(?:\\s*(?:(\\([^)]*\\))|(\\w+)))",
 					"captures": {
 						"1": {
 							"name": "entity.name.function.member.capnp"
@@ -254,9 +408,25 @@
 							]
 						},
 						"4": {
+							"name": "entity.name.type.capnp",
+							"patterns": [
+								{
+									"include": "#name"
+								}
+							]
+						},
+						"5": {
 							"patterns": [
 								{
 									"include": "#methodArgs"
+								}
+							]
+						},
+						"6": {
+							"name": "entity.name.type.capnp",
+							"patterns": [
+								{
+									"include": "#name"
 								}
 							]
 						}
@@ -272,11 +442,11 @@
 					"end": "\\)",
 					"patterns": [
 						{
-							"name": "variable.name.capnp",
+							"name": "variable.parameter.capnp",
 							"match": "(\\w+)(?:\\s*(:[^)]*\\)))?",
 							"captures": {
 								"1": {
-									"name": "variable.name.capnp"
+									"name": "variable.parameter.capnp"
 								},
 								"2": {
 									"name": "meta.argvar",
@@ -292,7 +462,33 @@
 				}
 			]
 		},
-		"strings": {
+		"valueRef": {
+			"name": "meta.valueRef.capnp",
+			"patterns": [
+				{"include": "#literal"},
+				{
+					"name": "variable.other.ref.capnp",
+					"match": "\\.[A-Za-z]\\w*"
+				}
+			]
+		},
+		"literal": {
+			"name": "meta.literal.capnp",
+			"patterns": [
+				{"include": "#string"},
+				{"include": "#boolean"},
+				{"include": "#numeric"}
+			]
+		},
+		"boolean": {
+			"name": "constant.language.boolean.capnp",
+			"match": "(false|true)"
+		},
+		"numeric": {
+			"name": "constant.numeric.capnp",
+			"match": "(0x[0-9A-Fa-f]+)|(\\d+)"
+		},
+		"string": {
 			"name": "string.quoted.double.capnp",
 			"begin": "\"",
 			"end": "\"",
