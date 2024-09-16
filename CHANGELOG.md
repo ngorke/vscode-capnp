@@ -6,9 +6,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.2.0] - 2024-09-16
+
+### Added
+
+- Configuration for `capnp` binary path
+- Configuration for import paths
+- Configuration for standard imports
+
 ### Fixed
 
-- Improved syntax highlighting for:
+- Improved syntax highlighting for
   - Nested interfaces
   - Nested structs
   - Constants
