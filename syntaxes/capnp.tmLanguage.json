@@ -311,6 +311,9 @@
 					"patterns": [
 						{
 							"include": "#field"
+						},
+						{
+							"include": "#comment"
 						}
 					],
 					"end": "}",
