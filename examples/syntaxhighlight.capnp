@@ -30,7 +30,7 @@ interface MyInterface @0xbdec316f14977682 {
 interface AnnotatedInterface @0xde994c3567d1f8ea $foo("bar") $bar {}
 
 enum EnumNoID {
-	# foobar
+	# comment
 	foo @0;
 	bar @1;
 }
@@ -41,10 +41,12 @@ enum EnumID @0xdf6e67366118a937 {
 enum AnnotatedEnum $foo("bar") $bar {}
 
 struct StructNoID {
+	# comment
 	foo @0 :Bool = true;
 	bar @1 :Text = "I love default values!";
 	baz @6 :UInt32 = 0xC0FFEE;
 	union {
+		# comment
 		yes @2 :Void;
 		no @3 :Void;
 	}
@@ -58,10 +60,12 @@ struct StructID @0xf38708a52badaad4 {
 	bar @1 :Text;
 
 	union {
+		# comment
 		yes @2 :Void;
 		no @3 :Void;
 	}
 	yesOrNo :union {
+		# comment
 		yes @4 :Void;
 		no @5 :Void;
 	}

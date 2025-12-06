@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.2.1] - 2025-12-07
+
+### Fixed
+
+- Fixed comments not being highlighted properly in unions (by [ShadiestGoat](https://github.com/ShadiestGoat))
+
 ## [0.2.0] - 2024-09-16
 
 ### Added
